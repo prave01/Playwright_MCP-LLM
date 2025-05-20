@@ -1,0 +1,13 @@
+# Ignore development and config files
+src/
+node_modules/
+.vscode/
+*.log
+*.ts
+*.tsbuildinfo
+.env
+.env.*
+.git/
+.gitignore
+npm-debug.log
+build/
