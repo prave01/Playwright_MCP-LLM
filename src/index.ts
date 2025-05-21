@@ -1,4 +1,42 @@
-console.log("This is a typescript project");
-import { some } from "./controllers/some";
-console.log("By Praveen");
-some();
+import { Client } from "@modelcontextprotocol/sdk/client/index";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp";
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse";
+import { exec } from "child_process";
+type client_vars = {
+  client: { name: string; version: string };
+  purpose: string;
+  base_url: string;
+};
+
+class MCP_Client {
+  base_url: string;
+  client_fields: { name: string; version: string };
+  purpose: string;
+  // Initializes the client property with a new Client instance
+  constructor({ client, purpose, base_url }: client_vars) {
+    // Setting the variables for the MCP Client
+    this.base_url = base_url;
+    this.client_fields = client;
+    this.purpose = purpose;
+  }
+
+  // Starts the Playwright MCP Server
+  start_server(port: number) {
+    exec(
+      `npx playwright-mcp-server --port ${port}`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error starting server: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.error(`Server stderr: ${stderr}`);
+          return;
+        }
+        console.log(`Server started: ${stdout}`);
+      }
+    );
+  }
+
+  connect_with_server() {}
+}
