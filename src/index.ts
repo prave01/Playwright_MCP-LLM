@@ -21,7 +21,7 @@ class MCP_Client {
   }
 
   // Starts the Playwright MCP Server
-  start_server(port: number, transport: string) {
+  start_server(port: number) {
     exec(
       `npx playwright-mcp-server --port ${port}`,
       (error, stdout, stderr) => {
