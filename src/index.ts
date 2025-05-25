@@ -1,12 +1,19 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { constructor_types } from "./_types/index_types";
 
 class MCP_Client {
+  //? Global types for the global variables
   port: number;
+  client: Client;
 
   //* Specify the port to connect with the server
-  constructor(server_port: number) {
-    this.port = server_port;
+  constructor(creds: constructor_types) {
+    this.port = creds.port;
+    this.client = new Client({
+      name: creds.name,
+      version: creds.version,
+    });
   }
 
   async Connect_Server() {
@@ -34,8 +41,16 @@ class MCP_Client {
         console.error("🤕 Fkk ended up having error :", err);
       });
   }
+
+  //* Give commads to the playwright server
 }
 
+const options: constructor_types = {
+  name: "client_1",
+  port: 8080,
+  version: "v.1.0.0",
+};
+
 //* New Client Instance
-const client = new MCP_Client(8080);
+const client = new MCP_Client(options);
 client.Connect_Server();
