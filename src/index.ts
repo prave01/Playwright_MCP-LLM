@@ -16,7 +16,6 @@ class MCP_Client {
     const transport = new SSEClientTransport(
       new URL("http:localhost:8080/sse")
     );
-
     const new_client = new Client({
       name: "sse-client",
       version: "1.0.0",
