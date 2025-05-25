@@ -12,7 +12,6 @@ class MCP_Client {
   async Async_Client() {
     // Transport layer for sending messages between server
     // and client using Server-Sent Events
-
     const transport = new SSEClientTransport(
       new URL("http:localhost:8080/sse")
     );
