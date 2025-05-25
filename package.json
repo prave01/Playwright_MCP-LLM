@@ -5,13 +5,14 @@
   "scripts": {
     "build": "npx tsc -w",
     "start:server": "npx @playwright/mcp@latest --port 8080",
-    "start": "node ./build/index.js"
+    "start": "nodemon ./build/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "nodemon": "^3.1.10",
     "typescript": "^5.8.3"
   },
   "dependencies": {
