@@ -21,7 +21,6 @@ class MCP_Client {
       name: "sse-client",
       version: "1.0.0",
     });
-
     // Connect the server on port 8080 with client using SSE
     await new_client
       .connect(transport)
