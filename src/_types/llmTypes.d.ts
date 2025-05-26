@@ -1,4 +1,4 @@
-interface llm_client_types {
+interface LLMClientTypes {
   apiKey: any;
   model: string;
   config: GenerateContentConfig;

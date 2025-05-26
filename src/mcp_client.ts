@@ -8,7 +8,7 @@ class MCP_Client {
   private server_called: boolean;
 
   //* Specify the port to connect with the server
-  constructor(creds: constructor_types) {
+  constructor(creds: ConstructorTypes) {
     this.port = creds.port;
     this.client = new Client({
       name: creds.name,
@@ -68,7 +68,7 @@ class MCP_Client {
   }
 }
 
-const options: constructor_types = {
+const options: ConstructorTypes = {
   name: "client_1",
   port: 8080,
   version: "v.1.0.0",

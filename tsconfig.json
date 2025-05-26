@@ -5,11 +5,11 @@
     "moduleResolution": "NodeNext",
     "outDir": "./build",
     "rootDir": "./src",
-    "esModuleInterop": true,
+    "noEmit": true,
     "skipLibCheck": true,
-    "sourceMap": true,
-    "resolveJsonModule": true
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "sourceMap": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"]
 }
