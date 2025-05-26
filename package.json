@@ -2,22 +2,27 @@
   "name": "mcp_client",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "npx tsc -w",
     "start:server": "npx @playwright/mcp@latest --port 8080",
-    "start": "nodemon ./build/index.js"
+    "start": "tsx watch src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/node": "^22.15.21",
     "nodemon": "^3.1.10",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@google/genai": "^1.0.1",
     "@modelcontextprotocol/sdk": "^1.11.5",
     "@playwright/mcp": "^0.0.26",
-    "@types/node": "^22.15.21"
+    "dotenv": "^16.5.0",
+    "mime": "^4.0.7"
   }
 }

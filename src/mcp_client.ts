@@ -1,8 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
-import { constructor_types } from "./_types/index_types";
 
-export default class MCP_Client {
+class MCP_Client {
   //? Global types for the global variables
   port: number;
   client: Client;
@@ -54,7 +53,15 @@ export default class MCP_Client {
       //     })
       //   );
 
-      console.log(response.tools.map((item) => item.inputSchema.properties));
+      const new_data = response.tools.map((item) => {
+        return {
+          name: item?.name,
+          description: item.description,
+          input_Schema: item.inputSchema.properties,
+        };
+      });
+
+      console.log(new_data);
     } catch (err) {
       console.error("Error:", err);
     }
@@ -66,3 +73,5 @@ const options: constructor_types = {
   port: 8080,
   version: "v.1.0.0",
 };
+
+export { MCP_Client };
