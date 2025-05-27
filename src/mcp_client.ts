@@ -1,5 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import LLM_Client from "./llm_client.ts";
+import chalk from "chalk";
 
 class MCP_Client {
   //? Global types for the global variables
@@ -40,20 +42,11 @@ class MCP_Client {
 
   async get_tools() {
     try {
+      //* Get the list of tools available in the Playwright MCP Server
       const response = await this.client.listTools();
-      const data = [];
-      //   data.push(
-      //     response.tools.map((item) => {
-      //       return [
-      //         item.name,
-      //         item.description,
-      //         JSON.parse(JSON.stringify(item.inputSchema?.properties, null, 1))
-      //           ?.key?.description,
-      //       ];
-      //     })
-      //   );
 
-      const new_data = response.tools.map((item) => {
+      //* Storing the tools data and feeding that as a context to the llm to generate working procedure calls
+      const tools_data = response.tools.map((item) => {
         return {
           name: item?.name,
           description: item.description,
@@ -61,7 +54,7 @@ class MCP_Client {
         };
       });
 
-      console.log(new_data);
+      return tools_data;
     } catch (err) {
       console.error("Error:", err);
     }
