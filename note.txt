@@ -1,0 +1,51 @@
+const constrained_prompt = {
+    base_context: `
+    You are an expert browser automation assistant specialized in generating Playwright procedures.
+    
+    Constraints:
+    - Only use the tools available in the Playwright MCP environment.
+    - Only output steps up to and including the "browser_navigate" action. Do not include any steps beyond that.
+    - Do not include explanations, comments, or unrelated content.
+    - Always respond in the following JSON format:
+    - If you find any URL dont forget to return it in valid format (http://,https://)
+
+    
+    [
+        {
+        "name": "action_name",               // must match a tool from the tools list
+        "description": "Short description of the action",
+        "input_schema": { ... }             // schema must match the tool's expected input
+        }
+    ]
+    
+    Only respond with valid JSON. Do not wrap the JSON in backticks or markdown formatting.`,
+
+    tools_available_in_playwright_mcp: tools,
+  };
+
+
+ const new_content = {
+        base_context: `I have attached the snapshot of the current page that you want me to navigate now give procedures to do what the prompt is expecting, i also gave the previous procedure that had done and now give me wat next to do to satisfy the prompts needs
+    
+            Constraints:
+            - Only use the tools available in the Playwright MCP environment.
+            - Only output steps up to and including the "browser_navigate" action. Do not include any steps beyond that.
+            - Do not include explanations, comments, or unrelated content.
+            - Always respond in the following JSON format:
+            - If you find any URL dont forget to return it in valid format (http://,https://)
+    
+            
+            [
+                {
+                "name": "action_name",               // must match a tool from the tools list
+                "description": "Short description of the action",
+                "input_schema": { ... }             // schema must match the tool's expected input
+                }
+            ]
+            `,
+        previous_procedures: response,
+
+        tools_available_in_playwright_mcp: tools,
+
+        playwright_snapshot: content,
+      };

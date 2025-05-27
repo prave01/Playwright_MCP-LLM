@@ -97,40 +97,42 @@ export default class LLM_Client {
       history: [],
     });
 
-    const input = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
+    // const input = readline.createInterface({
+    //   input: process.stdin,
+    //   output: process.stdout,
+    // });
 
-    const get_name = async (): Promise<string> => {
-      return new Promise((resolve) => {
-        console.log(chalk.bgMagenta(chalk.white("You:")));
-        input.question("\n", (answer) => {
-          resolve(answer);
-          console.log(
-            chalk.magenta(
-              "\n---------------------------------------------------\n"
-            )
-          );
-        });
-      });
-    };
+    // const get_name = async (): Promise<string> => {
+    //   return new Promise((resolve) => {
+    //     console.log(chalk.bgMagenta(chalk.white("You:")));
+    //     input.question("\n", (answer) => {
+    //       input.close();
+    //       resolve(answer);
+    //       console.log(
+    //         chalk.magenta(
+    //           "\n---------------------------------------------------\n"
+    //         )
+    //       );
+    //     });
+    //   });
+    // };
 
     while (true) {
-      const prompt = await get_name();
+      // const prompt = await get_name();
 
-      if (prompt === "exit") {
-        console.log(chalk.bgWhite(chalk.red("Bye Bye Bye 👋🏻..")));
-        process.exit();
-      }
-      const final_context = {
-        ...context,
-        final_prompt:
-          prompt +
-          `\n\nGenerate a browser automation procedure using the tools above. Only include steps up to the "browser_navigate" tool call. Format the response as a JSON array of actions, following the specified schema.`,
-      };
+      // if (prompt === "exit") {
+      //   console.log(chalk.bgWhite(chalk.red("Bye Bye Bye 👋🏻..")));
+      //   process.exit();
+      // }
+
+      // const final_context = {
+      //   ...context,
+      //   final_prompt:
+      //     prompt +
+      //     `\n\nGenerate a browser automation procedure using the tools above. Only include steps up to the "browser_navigate" tool call. Format the response as a JSON array of actions, following the specified schema.`,
+      // };
       let response = await chat.sendMessage({
-        message: JSON.stringify(final_context),
+        message: JSON.stringify(context),
       });
       if (response) {
         console.log(chalk.bgBlue(chalk.white("Gemma:\n")));

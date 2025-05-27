@@ -67,4 +67,4 @@ const options: ConstructorTypes = {
   version: "v.1.0.0",
 };
 
-export { MCP_Client };
+export default MCP_Client;
