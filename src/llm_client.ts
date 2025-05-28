@@ -49,7 +49,12 @@ export default class LLM_Client {
     console.log(completion.choices[0].message);
   }
 
-  async RunLLM(context: object, response_type: string) {
+  async RunLLM(
+    context: string,
+    response_type: string,
+    choose_model: string,
+    history?: Array<{ user: string; model: string; snapshot: string }>
+  ) {
     //* Checks the output is given or not
     // if (!args.outputType) {
     //   throw Error("🧱 Please provide a response type");
@@ -74,7 +79,7 @@ export default class LLM_Client {
     // const config: GenerateContentConfig = args.outputType;
 
     //* Gives the model
-    const model = "gemini-2.0-flash";
+    const model = choose_model;
 
     //* Preparing the content plate to feed the model for response
     const contents: Content = {
@@ -91,10 +96,27 @@ export default class LLM_Client {
     };
     //* Getting the response back
 
+    const chatHistory = history
+      ? history.flatMap((item) => [
+          {
+            role: "user" as const,
+            parts: [
+              {
+                text: `Snapshot: ${item.snapshot}\n\nUser Input: ${item.user}`,
+              },
+            ],
+          },
+          {
+            role: "model" as const,
+            parts: [{ text: item.model }],
+          },
+        ])
+      : [];
+
     const chat = ai.chats.create({
       model,
       config: Generation_Config,
-      history: [],
+      history: chatHistory,
     });
 
     // const input = readline.createInterface({
@@ -132,19 +154,24 @@ export default class LLM_Client {
       //     `\n\nGenerate a browser automation procedure using the tools above. Only include steps up to the "browser_navigate" tool call. Format the response as a JSON array of actions, following the specified schema.`,
       // };
       let response = await chat.sendMessage({
-        message: JSON.stringify(context),
+        message: context,
       });
-      if (response) {
+
+      if (response_type === "application/json") {
         console.log(chalk.bgBlue(chalk.white("Gemma:\n")));
-        // process.stdout.write(response.text)
         return JSON.parse(response.text);
-        // for await (const chunk of response) {
-        //   const text = chunk.text;
-        //   if (text) {
-        //     fullResponse += text;
-        //     process.stdout.write(text);
-        //   }
+      } else {
+        console.log(chalk.bgBlue(chalk.white("Gemma:\n")));
+        return response.text;
       }
+      // process.stdout.write(response.text)
+      // for await (const chunk of response) {
+      //   const text = chunk.text;
+      //   if (text) {
+      //     fullResponse += text;
+      //     process.stdout.write(text);
+      //   }
+
       console.log(
         chalk.magenta("---------------------------------------------------\n")
       );

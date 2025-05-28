@@ -9,7 +9,7 @@ Todo 2. The snapshot should be sent everytime after each execution
 */
 
 import MCP_Client from "./mcp_client.ts";
-import Flow from "./playwright_controller/controller.ts";
+import Controller2 from "./playwright_controller/controller2.ts";
 
 let options = {
   name: "client_1",
@@ -32,7 +32,7 @@ async function main() {
   //   outputType: { responseMimeType: "text/plain" },
   // });
 
-  await Flow();
+  await Controller2();
 }
 
 main();
