@@ -3,11 +3,13 @@ import LLM_Client from "../llm_client.ts";
 import * as readline from "node:readline";
 import chalk from "chalk";
 import BuildContext from "./buildContext.ts";
-import fs from "node:fs/promises";
-import * as path from "path";
 import AI_BUILD_CONTEXT from "./aibuild_context.ts";
+import * as fs from "fs";
+import * as path from "path";
 
-const HISTORY_PATH = path.join(process.cwd(), "history.json");
+const IMAGE_PATH = path.join(process.cwd(), "image/");
+
+console.log(IMAGE_PATH);
 
 const mcp_client = new MCP_Client({
   name: "scraper",
@@ -35,12 +37,14 @@ const get_input = async (): Promise<string> => {
   });
 };
 
-const history = [{ user: "", model: "", snapshot: "" }];
+const history = [{ user: "", model: "", snapshot: "", screenshot: "" }];
 
-const Controller2 = async (context: object = null) => {
+const Controller2 = async (visionMode: boolean = false) => {
   await mcp_client.Connect_Server();
 
   const tools = JSON.stringify(await mcp_client.get_tools());
+
+  console.log(tools);
 
   await get_input()
     .then(async (result) => {
@@ -99,51 +103,91 @@ const Controller2 = async (context: object = null) => {
         "gemma-3-27b-it"
       );
 
-      console.log("step1: ", need);
+      await mcp_client.client.callTool({
+        name: "browser_navigate",
+        arguments: {
+          url: "https://www.google.com",
+        },
+      });
 
       while (true) {
         const snapshot = await mcp_client.client.callTool({
           name: "browser_snapshot",
         });
 
-        const ai_context = await AI_BUILD_CONTEXT(
-          snapshot.content[0].text,
-          need
-        );
+        const screenshot = await mcp_client.client.callTool({
+          name: "browser_screen_capture",
+          arguments: {
+            raw: true,
+          },
+        });
 
-        console.log("step 2: ", ai_context);
+        // const base64Data = screenshot.content[0].data.replace(
+        //   /^data:image\/\w+;base64,/,
+        //   ""
+        // );
+
+        // const buffer = Buffer.from(base64Data, "base64");
+
+        // // Create screenshots directory if it doesn't exist
+        // const screenshotsDir = path.join(process.cwd(), "screenshots");
+        // if (!fs.existsSync(screenshotsDir)) {
+        //   fs.mkdirSync(screenshotsDir, { recursive: true });
+        // }
+
+        // // Generate filename with timestamp
+        // const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        // const screenshotPath = path.join(
+        //   screenshotsDir,
+        //   `screenshot-${timestamp}.png`
+        // );
+
+        // // Save the file
+        // fs.writeFileSync(screenshotPath, buffer);
+
+        // console.log(`Screenshot saved to: ${screenshotPath}`);
+
+        const ai_context = await AI_BUILD_CONTEXT(
+          visionMode ? screenshot : snapshot.content[0].text,
+          need,
+          screenshot.content[0].data
+        );
 
         const final_context = BuildContext(
-          snapshot?.content[0].text,
+          visionMode ? screenshot.content[0].data : snapshot?.content[0].text,
           ai_context,
-          tools
+          tools,
+          visionMode,
+          screenshot.content[0].data
         );
-
-        console.log("step 3: ", typeof final_context);
 
         const response = await llm_client.RunLLM(
           final_context,
           "application/json",
           "gemini-2.0-flash",
-          history
+          history,
+          visionMode
         );
-
-        console.log("step 4 procedures: ", response);
 
         history.push({
           user: result,
           model: JSON.stringify(response),
-          snapshot: snapshot?.content[0]?.text,
+          snapshot: visionMode
+            ? screenshot.content[0].data
+            : snapshot?.content[0]?.text,
+          screenshot: screenshot.content[0].data,
         });
-
-        console.log(response);
 
         // Process all actions sequentially
         for (const item of response) {
-          await mcp_client.client.callTool({
+          const tool_response = await mcp_client.client.callTool({
             name: item.name,
             arguments: item.input_schema,
           });
+
+          console.log(tool_response);
+
+          // console.log("tool response: ", JSON.parse(tool_response));
           console.log(
             `\n[LOG] [CURRENT_ACTION] ${chalk.magenta(
               item.name

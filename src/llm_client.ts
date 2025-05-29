@@ -15,6 +15,7 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import * as readline from "node:readline";
 import OpenAI from "openai";
+import { visionmode } from "./constants.ts";
 
 config();
 
@@ -53,7 +54,13 @@ export default class LLM_Client {
     context: string,
     response_type: string,
     choose_model: string,
-    history?: Array<{ user: string; model: string; snapshot: string }>
+    history?: Array<{
+      user: string;
+      model: string;
+      snapshot: string;
+      screenshot: string;
+    }>,
+    visioMode: boolean = false
   ) {
     //* Checks the output is given or not
     // if (!args.outputType) {
@@ -96,23 +103,42 @@ export default class LLM_Client {
     };
     //* Getting the response back
 
-    const chatHistory = history
-      ? history.flatMap((item) => [
-          {
-            role: "user" as const,
-            parts: [
-              {
-                text: `Snapshot: ${item.snapshot}\n\nUser Input: ${item.user}`,
-              },
-            ],
-          },
-          {
-            role: "model" as const,
-            parts: [{ text: item.model }],
-          },
-        ])
-      : [];
+    type Part = {
+      text?: string;
+      inlineData?: {
+        mimeType: string;
+        data: string;
+      };
+    };
 
+    const chatHistory = history
+      ? history.flatMap((item) => {
+          const baseParts: Part[] = [
+            {
+              text: `User Goal: ${item.user}\n\nPage Snapshot: ${item.snapshot}`,
+            },
+          ];
+
+          if (item.screenshot) {
+            baseParts.push({
+              inlineData: {
+                mimeType: "image/png",
+                data: item.screenshot,
+              },
+            });
+          }
+          return [
+            {
+              role: "user" as const,
+              parts: baseParts,
+            },
+            {
+              role: "model" as const,
+              parts: [{ text: item.model }],
+            },
+          ];
+        })
+      : [];
     const chat = ai.chats.create({
       model,
       config: Generation_Config,

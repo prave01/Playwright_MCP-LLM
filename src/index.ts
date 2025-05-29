@@ -32,7 +32,7 @@ async function main() {
   //   outputType: { responseMimeType: "text/plain" },
   // });
 
-  await Controller2();
+  await Controller2(false);
 }
 
 main();

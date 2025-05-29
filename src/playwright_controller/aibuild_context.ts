@@ -1,4 +1,4 @@
-import data from "../constants.ts";
+import { data } from "../constants.ts";
 import LLM_Client from "../llm_client.ts";
 
 const llm_client = new LLM_Client({
@@ -7,11 +7,12 @@ const llm_client = new LLM_Client({
   model: "summa",
 });
 
-const history = [{ user: "", model: "", snapshot: "" }];
+const history = [{ user: "", model: "", snapshot: "", screenshot: "" }];
 
 const AI_BUILD_CONTEXT = async (
   snapshot: string,
-  userGoal: string
+  userGoal: string,
+  screenshot: string
 ): Promise<any> => {
   const context = `
     You are an intelligent agent responsible for interpreting a live web page snapshot and generating a clear, step-by-step natural language instruction to achieve the user's automation goal.
@@ -79,6 +80,9 @@ const AI_BUILD_CONTEXT = async (
 
     ## CURRENT PAGE SNAPSHOT:
     ${snapshot}
+
+    ## SCREENSHOT:
+    ${screenshot}
 `;
 
   const response = await llm_client.RunLLM(
@@ -92,6 +96,7 @@ const AI_BUILD_CONTEXT = async (
     user: context,
     model: response,
     snapshot: snapshot,
+    screenshot: screenshot,
   });
 
   console.log("new prompt for each step:", response);
