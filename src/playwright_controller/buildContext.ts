@@ -109,8 +109,7 @@ const BuildContext = (
     ## CURRENT PAGE SNAPSHOT:
     ${JSON.stringify(snapshot, null, 2)}
 
-    ## CURRENT PAGE SCREENSHOT:
-    ${screenshot}
+  
     `;
 
   return visionMode ? vision_mode_context : context;

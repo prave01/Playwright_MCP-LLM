@@ -1,3 +1,7 @@
+// Load environment variables first
+import * as dotenv from "dotenv";
+dotenv.config({ path: ".env" });
+
 /*
 
 * Current Goal - 
@@ -31,8 +35,9 @@ async function main() {
   //   model: "gemma3",
   //   outputType: { responseMimeType: "text/plain" },
   // });
-
-  await Controller2(false);
+  // await Controller2(false);
 }
 
-main();
+// main();
+
+await Controller2();
